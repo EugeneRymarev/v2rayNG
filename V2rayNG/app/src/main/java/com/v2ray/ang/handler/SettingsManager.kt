@@ -419,6 +419,10 @@ object SettingsManager {
      * Check if VPN mode is enabled.
      * @return True if VPN mode is enabled, false otherwise.
      */
+    /** IPv6 inside the VPN: turned on in settings, or WARP provides it. */
+    fun isVpnIpv6Enabled(): Boolean =
+        MmkvManager.decodeSettingsBool(AppConfig.PREF_IPV6_ENABLED) || WarpManager.shouldRouteIpv6()
+
     fun isVpnMode(): Boolean {
         val mode = MmkvManager.decodeSettingsString(AppConfig.PREF_MODE)
         return mode == null || mode == VPN

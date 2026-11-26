@@ -40,6 +40,7 @@ import com.v2ray.ang.handler.MmkvManager
 import com.v2ray.ang.handler.MmkvManager.rememberMmkvBool
 import com.v2ray.ang.handler.MmkvManager.rememberMmkvString
 import com.v2ray.ang.handler.SettingsChangeManager
+import com.v2ray.ang.handler.WarpMode
 import com.v2ray.ang.root.RootManager
 import com.v2ray.ang.ui.base.BaseComponentActivity
 import com.v2ray.ang.ui.compose.AppTopBar
@@ -69,6 +70,7 @@ abstract class BaseSettingsActivity : BaseComponentActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.refreshSystemVpnSettingsAvailability()
+                viewModel.refreshWarpState()
             }
         }
     }
@@ -139,6 +141,8 @@ private fun SettingsForm(
     val systemVpnSettingsAvailable by viewModel.systemVpnSettingsAvailable.collectAsStateWithLifecycle()
     var uiSettingsExpanded by rememberSaveable { mutableStateOf(true) }
     var vpnSettingsExpanded by rememberSaveable { mutableStateOf(true) }
+    var warpSettingsExpanded by rememberSaveable { mutableStateOf(true) }
+    val warpState by viewModel.warpState.collectAsStateWithLifecycle()
     var coreSettingsExpanded by rememberSaveable { mutableStateOf(true) }
     var muxSettingsExpanded by rememberSaveable { mutableStateOf(false) }
     var fragmentSettingsExpanded by rememberSaveable { mutableStateOf(false) }
@@ -248,6 +252,12 @@ private fun SettingsForm(
     val observatoryLeastLoadMethodEntries = stringArrayResource(R.array.observatory_least_load_method).toList()
     val observatoryLeastLoadMethodValues = stringArrayResource(R.array.observatory_least_load_method).toList()
     val modeEntries = stringArrayResource(R.array.mode_entries).toList()
+    val warpModeEntries = listOf(
+        stringResource(R.string.warp_mode_off),
+        stringResource(R.string.warp_mode_ipv6_servers),
+        stringResource(R.string.warp_mode_all),
+    )
+    val warpModeValues = listOf(WarpMode.OFF.value, WarpMode.IPV6_SERVERS.value, WarpMode.ALL.value)
     val modeValues = stringArrayResource(R.array.mode_value).toList()
 
     with(rows) {
@@ -416,6 +426,37 @@ private fun SettingsForm(
                     keyboardNumber = true,
                     onValueChanged = { hevTunRwTimeout = it }
                 )
+            }
+
+            CollapsiblePreferenceGroupHeader(
+                title = stringResource(R.string.title_warp_settings),
+                expanded = warpSettingsExpanded,
+                onExpandedChange = { warpSettingsExpanded = it }
+            )
+            if (warpSettingsExpanded) {
+                SettingsListItem(
+                    title = stringResource(R.string.title_pref_warp_mode),
+                    entries = warpModeEntries,
+                    values = warpModeValues,
+                    selectedValue = warpState.mode.value,
+                    enabled = !warpState.isWorking,
+                    focusKey = AppConfig.PREF_WARP_MODE,
+                    onSelected = { viewModel.setWarpMode(WarpMode.fromValue(it)) }
+                )
+                SettingsMenuItem(
+                    title = stringResource(
+                        if (warpState.endpoint == null) R.string.title_warp_create_account else R.string.title_warp_recreate_account
+                    ),
+                    subtitle = stringResource(R.string.summary_warp_account),
+                    onClick = { viewModel.createWarpAccount() }
+                )
+                if (warpState.endpoint != null) {
+                    SettingsMenuItem(
+                        title = stringResource(R.string.title_warp_find_endpoint),
+                        subtitle = stringResource(R.string.summary_warp_endpoint, warpState.endpoint.orEmpty()),
+                        onClick = { viewModel.findWarpEndpoint() }
+                    )
+                }
             }
 
             CollapsiblePreferenceGroupHeader(

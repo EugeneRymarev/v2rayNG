@@ -17,6 +17,8 @@ import com.v2ray.ang.enums.EConfigType
 import com.v2ray.ang.extension.isNotNullEmpty
 import com.v2ray.ang.handler.MmkvManager
 import com.v2ray.ang.handler.SettingsManager
+import com.v2ray.ang.handler.WarpManager
+import com.v2ray.ang.handler.WarpMode
 import com.v2ray.ang.util.HttpUtil
 import com.v2ray.ang.util.JsonUtil
 import com.v2ray.ang.util.LogUtil
@@ -232,8 +234,27 @@ object CoreConfigManager {
         applyObservability(v2rayConfig, balancerStrategies)
         applySpeedDisabled(v2rayConfig)
         resolveOutboundDomainsToHosts(v2rayConfig)
+        applyWarpTransport(v2rayConfig)
 
         return v2rayConfig
+    }
+
+    // after domain resolve, so domains with only AAAA records count as IPv6 servers
+    private fun applyWarpTransport(v2rayConfig: V2rayConfig) {
+        val mode = WarpManager.getMode()
+        if (mode == WarpMode.OFF) return
+        val account = WarpManager.getAccount() ?: return
+        val warpProfile = WarpManager.toProfileItem(account)
+        val warpOutbound = CoreOutboundBuilder.convert(warpProfile) ?: return
+        // keep the IPv6 address even when IPv6 is off in settings
+        warpOutbound.settings?.address = warpProfile.localAddress.orEmpty().split(",").filter { it.isNotBlank() }
+        val ipv6Inbounds = if (SettingsManager.isVpnMode() && !WarpManager.hasGlobalIpv6()) {
+            listOf(if (SettingsManager.isUsingHevTun()) "socks" else "tun")
+        } else {
+            emptyList()
+        }
+        val routed = WarpTransport.apply(v2rayConfig, warpOutbound, mode, v2rayConfig.dns?.hosts, ipv6Inbounds)
+        LogUtil.i(AppConfig.TAG, "WARP mode=$mode, servers=${routed.size}, ipv6=${ipv6Inbounds.isNotEmpty()}")
     }
 
     /**

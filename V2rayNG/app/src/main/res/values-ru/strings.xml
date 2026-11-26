@@ -584,4 +584,20 @@
     <string name="action_more">Ещё</string>
     <string name="action_clear">Очистить</string>
     <string name="connection_connected_tv">Соединено</string>
+
+    <string name="title_warp_settings">Cloudflare WARP (IPv6)</string>
+    <string name="title_pref_warp_mode">Подключаться к серверам через WARP</string>
+    <string name="warp_mode_off">Выключено</string>
+    <string name="warp_mode_ipv6_servers">Только к серверам с IPv6-адресом</string>
+    <string name="warp_mode_all">Ко всем серверам</string>
+    <string name="title_warp_create_account">Создать аккаунт WARP</string>
+    <string name="title_warp_recreate_account">Пересоздать аккаунт WARP</string>
+    <string name="summary_warp_account">Даёт IPv6, если у провайдера только IPv4</string>
+    <string name="title_warp_find_endpoint">Найти рабочий адрес WARP</string>
+    <string name="summary_warp_endpoint">Сейчас адрес: %1$s</string>
+    <string name="toast_warp_registering">Создание аккаунта WARP…</string>
+    <string name="toast_warp_searching">Поиск адреса WARP…</string>
+    <string name="toast_warp_ready">WARP готов (%1$s)</string>
+    <string name="toast_warp_register_failed">Не удалось создать аккаунт WARP. Подключитесь к любому серверу и повторите</string>
+    <string name="toast_warp_no_endpoint">Рабочий адрес WARP не найден</string>
 </resources>
