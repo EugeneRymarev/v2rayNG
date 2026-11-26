@@ -61,6 +61,8 @@ object AppConfig {
     const val PREF_UI_MODE_NIGHT = "pref_ui_mode_night"
     const val PREF_DYNAMIC_COLOR = "pref_dynamic_color"
     const val PREF_IPV6_ENABLED = "pref_ipv6_enabled"
+    const val PREF_WARP_MODE = "pref_warp_mode"
+    const val PREF_WARP_ACCOUNT = "pref_warp_account"
     const val PREF_PREFER_IPV6 = "pref_prefer_ipv6"
     const val PREF_PROXY_SHARING = "pref_proxy_sharing_enabled"
     const val PREF_ENABLE_LOCAL_PROXY = "pref_enable_local_proxy"
@@ -118,6 +120,7 @@ object AppConfig {
     /** Tags for different proxy modes. */
     const val TAG_PROXY = "proxy"
     const val TAG_DIRECT = "direct"
+    const val TAG_WARP = "warp"
     const val TAG_BLOCKED = "block"
     const val TAG_FRAGMENT = "fragment"
     const val TAG_DNS = "dns-module"

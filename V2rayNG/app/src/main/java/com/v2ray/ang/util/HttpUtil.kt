@@ -8,8 +8,10 @@ import okhttp3.Credentials
 import okhttp3.Headers
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.io.IOException
 import java.net.IDN
@@ -132,6 +134,31 @@ object HttpUtil {
             }
         } catch (e: Exception) {
             LogUtil.e(AppConfig.TAG, "Failed to get URL content", e)
+        }
+        return null
+    }
+
+    /**
+     * POSTs [jsonBody] and returns the response body, or null on error.
+     */
+    fun postJson(request: UrlContentRequest, jsonBody: String, headers: Map<String, String> = emptyMap()): String? {
+        val url = request.url ?: return null
+        val client = buildOkHttpClient(request.timeout, request.httpPort, request.proxyUsername, request.proxyPassword, followRedirects = false)
+        val requestBuilder = Request.Builder()
+            .url(url)
+            .post(jsonBody.toRequestBody("application/json; charset=utf-8".toMediaType()))
+            .header("Connection", "close")
+        headers.forEach { (key, value) -> requestBuilder.header(key, value) }
+        try {
+            client.newCall(requestBuilder.build()).execute().use { response ->
+                if (!response.isSuccessful) {
+                    LogUtil.w(AppConfig.TAG, "POST request failed, code=${response.code}")
+                    return null
+                }
+                return response.body?.string()
+            }
+        } catch (e: Exception) {
+            LogUtil.e(AppConfig.TAG, "POST request failed", e)
         }
         return null
     }

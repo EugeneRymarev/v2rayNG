@@ -594,4 +594,20 @@
     <string name="action_more">More</string>
     <string name="action_clear">Clear</string>
     <string name="connection_connected_tv">Connected</string>
+
+    <string name="title_warp_settings">Cloudflare WARP (IPv6)</string>
+    <string name="title_pref_warp_mode">Connect to servers through WARP</string>
+    <string name="warp_mode_off">Off</string>
+    <string name="warp_mode_ipv6_servers">Only servers with an IPv6 address</string>
+    <string name="warp_mode_all">All servers</string>
+    <string name="title_warp_create_account">Create WARP account</string>
+    <string name="title_warp_recreate_account">Recreate WARP account</string>
+    <string name="summary_warp_account">Gives IPv6 when the provider has only IPv4</string>
+    <string name="title_warp_find_endpoint">Find working WARP address</string>
+    <string name="summary_warp_endpoint">Current address: %1$s</string>
+    <string name="toast_warp_registering">Creating WARP account…</string>
+    <string name="toast_warp_searching">Searching for WARP address…</string>
+    <string name="toast_warp_ready">WARP is ready (%1$s)</string>
+    <string name="toast_warp_register_failed">Failed to create a WARP account. Connect to any server and try again</string>
+    <string name="toast_warp_no_endpoint">No working WARP address found</string>
 </resources>
